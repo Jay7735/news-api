@@ -18,7 +18,7 @@ describe("3. GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then((response) => {
-        expect(response.body.topics.length).toBe(3)
+        expect(response.body.topics.length).toBe(3);
         response.body.topics.forEach((topic) => {
           expect(topic).toHaveProperty("slug");
           expect(topic).toHaveProperty("description");
@@ -47,4 +47,37 @@ describe("Error handling", () => {
         expect(response.body.msg).toBe("404 Not Found");
       });
   });
+});
+
+describe.only('3.5 GET /api', () => {
+    it('should return a JSON object showing all possible endpoints', () => {
+        return request(app).get('/api').expect(200).then((response)=> {
+            expect(response.body['GET /api']).toEqual({ description: 'serves up a json representation of all the available endpoints of the api'})
+            expect(response.body["GET /api/topics"]).toEqual({
+                "description": "serves an array of all topics",
+                "queries": [],
+                "exampleResponse": {
+                  "topics": [{ "slug": "football", "description": "Footie!" }]
+                }
+              })
+            expect(response.body["GET /api/articles"]).toEqual({
+                "description": "serves an array of all topics",
+                "queries": ["author", "topic", "sort_by", "order"],
+                "exampleResponse": {
+                  "articles": [
+                    {
+                      "title": "Seafood substitutions are increasing",
+                      "topic": "cooking",
+                      "author": "weegembump",
+                      "body": "Text from the article..",
+                      "created_at": "2018-05-30T15:59:13.341Z",
+                      "votes": 0,
+                      "comment_count": 6
+                    }
+                  ]
+                }
+              })
+        })
+    });
+   
 });
