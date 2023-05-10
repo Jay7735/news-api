@@ -1,4 +1,5 @@
 const connection = require("./db/connection");
+const fs = require('fs/promises')
 
 exports.selectTopics = () => {
     return connection
@@ -6,3 +7,12 @@ exports.selectTopics = () => {
     .then((result) => result.rows)
     ;
 };
+
+exports.selectEndpoints = () => {
+    return fs.readFile('endpoints.json', 'utf-8').then((result)=>{
+        const jsEndpoints = JSON.parse(result)
+        console.log(jsEndpoints['GET /api'], '<<models')
+        return jsEndpoints
+    })
+    
+}
