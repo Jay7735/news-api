@@ -159,3 +159,43 @@ describe("5 GET /api/articles", () => {
       });
   });
 });
+
+describe("6 GET /api/articles/:article_id/comments", () => {
+  it("should have the specified properties", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        response.body.comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("article_id");
+        });
+      });
+  });
+  it("should return the comments most recent first (ie DESC by date)", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  it('should return 400 error when passed an incorrect ID type', () => {
+    return request(app)
+    .get("/api/articles/blahblah/comments")
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("Invalid input");
+    });
+  });
+  it('should return 204 when passed an ID for which there are no comments', () => {
+    return request(app)
+    .get('/api/articles/4/comments')
+  });
+});

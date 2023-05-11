@@ -36,9 +36,22 @@ exports.selectArticles = () => {
     FROM articles
     LEFT JOIN comments ON comments.article_id = articles.article_id
     GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`, 
+    ORDER BY articles.created_at DESC;`
     )
     .then((result) => {
       return result.rows;
     });
+};
+
+exports.selectComments = (id) => {
+   
+  return connection.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`, [id]).then((result)=>{
+    if(result.rows.length === 0){
+        return Promise.reject({
+            status: 204,
+            msg: `No comments found for ID: ${id}`
+        })
+    }
+    return result.rows
+  })
 };
