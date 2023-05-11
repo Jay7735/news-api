@@ -87,13 +87,14 @@ describe("3.5 GET /api", () => {
   });
 });
 
-describe.only("4 GET /api/articles/:article_id", () => {
+describe("4 GET /api/articles/:article_id", () => {
   it("should return an object that has specified properties", () => {
     return request(app)
       .get("/api/articles/7")
       .expect(200)
       .then((response) => {
         expect(response.body.article).toHaveProperty("article_id");
+        expect(response.body.article['article_id']).toBe(7)
         expect(response.body.article).toHaveProperty("title");
         expect(response.body.article).toHaveProperty("topic");
         expect(response.body.article).toHaveProperty("author");
