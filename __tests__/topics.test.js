@@ -194,8 +194,12 @@ describe("6 GET /api/articles/:article_id/comments", () => {
       expect(response.body.msg).toBe("Invalid input");
     });
   });
-  it('should return 204 when passed an ID for which there are no comments', () => {
+  it('should return 404 when passed an ID for which there are no comments', () => {
     return request(app)
     .get('/api/articles/4/comments')
+    .expect(404)
+    .then((response)=>{
+      expect(response.body.msg).toBe('No comments found for ID: 4')
+    })
   });
 });
