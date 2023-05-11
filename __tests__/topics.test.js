@@ -94,7 +94,7 @@ describe("4 GET /api/articles/:article_id", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.article).toHaveProperty("article_id");
-        expect(response.body.article['article_id']).toBe(7)
+        expect(response.body.article["article_id"]).toBe(7);
         expect(response.body.article).toHaveProperty("title");
         expect(response.body.article).toHaveProperty("topic");
         expect(response.body.article).toHaveProperty("author");
@@ -122,3 +122,40 @@ describe("4 GET /api/articles/:article_id", () => {
   });
 });
 
+describe("5 GET /api/articles", () => {
+  it("should return an array of article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .then((response) => {
+        response.body.articles.forEach((article) => {
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
+        });
+      });
+  });
+  it("should not have a body on the article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .then((response) => {
+        response.body.articles.forEach((article) => {
+          expect(article.body).toBe(undefined);
+        });
+      });
+  });
+  it("should be sorted in descending date order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+});
