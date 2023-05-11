@@ -15,3 +15,15 @@ exports.selectEndpoints = () => {
     })
 }
 
+exports.selectArticleById = (id) => {
+    return connection.query("SELECT * from articles WHERE article_id = $1", [id]).then((result)=> {
+        const article = result.rows[0]
+        if(!article){
+            return Promise.reject({
+                status: 404,
+                msg: `Non-existent ID: ${id}`
+            })
+        }
+        return article
+    })
+}
