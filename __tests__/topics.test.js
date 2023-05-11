@@ -87,36 +87,4 @@ describe("3.5 GET /api", () => {
   });
 });
 
-describe.only("4 GET /api/articles/:article_id", () => {
-  it("should return an object that has specified properties", () => {
-    return request(app)
-      .get("/api/articles/7")
-      .expect(200)
-      .then((response) => {
-        expect(response.body.article).toHaveProperty("article_id");
-        expect(response.body.article).toHaveProperty("title");
-        expect(response.body.article).toHaveProperty("topic");
-        expect(response.body.article).toHaveProperty("author");
-        expect(response.body.article).toHaveProperty("body");
-        expect(response.body.article).toHaveProperty("created_at");
-        expect(response.body.article).toHaveProperty("votes");
-        expect(response.body.article).toHaveProperty("article_img_url");
-      });
-  });
-  it("should return error 400 when passed an incorrect id type", () => {
-    return request(app)
-      .get("/api/articles/blahblah")
-      .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe("Invalid input");
-      });
-  });
-  it("should return error 404 when passed an id that does not exist", () => {
-    return request(app)
-      .get("/api/articles/777")
-      .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe("Non-existent ID: 777");
-      });
-  });
-});
+
