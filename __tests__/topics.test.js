@@ -159,3 +159,64 @@ describe("5 GET /api/articles", () => {
       });
   });
 });
+
+describe("6 GET /api/articles/:article_id/comments", () => {
+  it("should have the specified properties", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        response.body.comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("article_id");
+        });
+      });
+  });
+  it('should return an array of appropriate length', () => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comments.length).toBe(11);
+  })})
+  it("should return the comments with most recent first (ie DESC by date)", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  it('should return 400 error when passed an incorrect ID type', () => {
+    return request(app)
+    .get("/api/articles/blahblah/comments")
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("Invalid input");
+    });
+  });
+  it('should return 404 when passed a non-existent ID', () => {
+    return request(app)
+    .get('/api/articles/777/comments')
+    .expect(404)
+    .then((response)=>{
+      expect(response.body.msg).toBe('Non-existent ID: 777')
+    })
+  });
+  it('should return 200 and an empty array when passed a valid ID which has no comments', () => {
+    return request(app)
+    .get('/api/articles/4/comments')
+    .expect(200)
+    .then((response)=>{
+      expect(response.body.comments.length).toBe(0)
+      expect(response.body.comments).toEqual([])
+    })
+  });
+  
+});
