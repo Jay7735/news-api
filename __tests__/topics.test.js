@@ -176,7 +176,14 @@ describe("6 GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  it("should return the comments most recent first (ie DESC by date)", () => {
+  it('should return an array of appropriate length', () => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.comments.length).toBe(11);
+  })})
+  it("should return the comments with most recent first (ie DESC by date)", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -194,12 +201,22 @@ describe("6 GET /api/articles/:article_id/comments", () => {
       expect(response.body.msg).toBe("Invalid input");
     });
   });
-  it('should return 404 when passed an ID for which there are no comments', () => {
+  it('should return 404 when passed a non-existent ID', () => {
     return request(app)
-    .get('/api/articles/4/comments')
+    .get('/api/articles/777/comments')
     .expect(404)
     .then((response)=>{
-      expect(response.body.msg).toBe('No comments found for ID: 4')
+      expect(response.body.msg).toBe('Non-existent ID: 777')
     })
   });
+  it('should return 200 and an empty array when passed a valid ID which has no comments', () => {
+    return request(app)
+    .get('/api/articles/4/comments')
+    .expect(200)
+    .then((response)=>{
+      expect(response.body.comments.length).toBe(0)
+      expect(response.body.comments).toEqual([])
+    })
+  });
+  
 });
