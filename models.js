@@ -51,9 +51,14 @@ const selectComments = (id) => {
     .then((result)=>{
             return result.rows})
 }
-            
-            
-          
 
-module.exports = {selectArticleById, selectTopics, selectEndpoints, selectArticles, selectComments }
+const addComments = (author, body, id) => {
+    return selectArticleById(id).then((result)=>{
+  return connection.query(`INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;`, [author, body, id]).then((result)=>{
+      
+      return result.rows
+    })
+})
+}
+module.exports = {selectArticleById, selectTopics, selectEndpoints, selectArticles, selectComments, addComments }
 

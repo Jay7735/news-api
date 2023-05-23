@@ -3,7 +3,8 @@ const {
   selectEndpoints,
   selectArticleById,
   selectArticles,
-  selectComments
+  selectComments,
+  addComments
 } = require("./models");
 
 exports.getTopics = (req, res, next) => {
@@ -45,3 +46,15 @@ exports.getComments = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.postComments = (req, res, next) => {
+    const id = req.params.article_id;
+    //console.log(id, 'from controler')
+    //console.log(req.body, 'from controller also')
+    const {author, body} = req.body
+    
+    addComments(author, body, id).then((result)=>{
+        res.status(201).send({comments: result})
+        //console.log({comments: result}, 'return of the controller')
+    }).catch(next)
+}
