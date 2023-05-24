@@ -292,7 +292,7 @@ describe("7 POST /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("8 PATCH /api/articles/:article_id", () => {
+describe("8 PATCH /api/articles/:article_id", () => {
   it("should take an update and update the votes by the given amount", () => {
     const updateVotes = { inc_votes: 19 };
     return request(app)
@@ -301,11 +301,11 @@ describe.only("8 PATCH /api/articles/:article_id", () => {
       .expect(200)
       .then((response) => {
         const returnedObj = response.body.updated;
-        expect(returnedObj.article_id).toBe(1)
-        expect(returnedObj.votes).toBe(119)
+        expect(returnedObj.article_id).toBe(1);
+        expect(returnedObj.votes).toBe(119);
       });
   });
-  it('should have the same functionality but to decrease votes', () => {
+  it("should have the same functionality but to decrease votes", () => {
     const updateVotes = { inc_votes: -19 };
     return request(app)
       .patch("/api/articles/1")
@@ -313,11 +313,39 @@ describe.only("8 PATCH /api/articles/:article_id", () => {
       .expect(200)
       .then((response) => {
         const returnedObj = response.body.updated;
-        expect(returnedObj.article_id).toBe(1)
-        expect(returnedObj.votes).toBe(81)
+        expect(returnedObj.article_id).toBe(1);
+        expect(returnedObj.votes).toBe(81);
+        console.log(returnedObj)
+      });
   });
-})})
-
-
-//it should return error if passed wrong data type
-//it should return error if passed incorrect id 
+  it("should return 400 error when passed an incorrect ID type", () => {
+    const updateVotes = { inc_votes: -19 };
+    return request(app)
+      .patch("/api/articles/blahblah")
+      .send(updateVotes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid input");
+      });
+  });
+  it('should return an error 400 when passed the wrong data type', () => {
+    const updateVotes = { inc_votes: 'stringIsWrong' };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid input");
+      });
+  });
+  it('should return 404 when passed a non-existent ID', () => {
+    const updateVotes = { inc_votes: -19 }
+    return request(app)
+      .post("/api/articles/777")
+      .send(updateVotes)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("404 Not Found");
+      });
+  });
+});
