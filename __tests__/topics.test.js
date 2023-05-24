@@ -221,7 +221,7 @@ describe("6 GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("7 POST /api/articles/:article_id/comments", () => {
+describe("7 POST /api/articles/:article_id/comments", () => {
   it("should add comments and respond with the posted comment ", () => {
     const comment = {
       author: "butter_bridge",
@@ -261,21 +261,21 @@ describe.only("7 POST /api/articles/:article_id/comments", () => {
       body: "I am making a comment",
     };
     return request(app)
-    .post("/api/articles/777/comments")
-    .send(comment)
-    .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe("Non-existent ID: 777");
-    });
+      .post("/api/articles/777/comments")
+      .send(comment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Non-existent ID: 777");
+      });
   });
-  it('should add comment and respond with posted comment even when given more than author and body', () => {
+  it("should add comment and respond with posted comment even when given more than author and body", () => {
     const comment = {
       author: "butter_bridge",
       body: "I am making a comment",
-      blah: "blah blah comment"
+      blah: "blah blah comment",
     };
     return request(app)
-    .post("/api/articles/1/comments")
+      .post("/api/articles/1/comments")
       .send(comment)
       .expect(201)
       .then((response) => {
@@ -287,7 +287,21 @@ describe.only("7 POST /api/articles/:article_id/comments", () => {
         expect(returnedObj).toHaveProperty("comment_id");
         expect(returnedObj).toHaveProperty("votes");
         expect(returnedObj).toHaveProperty("created_at");
-        expect(returnedObj).not.toHaveProperty("blah")
+        expect(returnedObj).not.toHaveProperty("blah");
+      });
   });
-})})
+});
 
+describe.only("8 PATCH /api/articles/:article_id", () => {
+  it("should take an update and update the votes by the given amount", () => {
+    const updateVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((response) => {
+        const returnedObj = response.body.updated;
+        expect(returnedObj.article_id).toBe(1)
+      });
+  });
+});

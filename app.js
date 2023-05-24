@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { getTopics, getEndpoints, getArticleById, getArticles, getComments, postComments } = require("./controllers");
+const { getTopics, getEndpoints, getArticleById, getArticles, getComments, postComments, updateComments } = require("./controllers");
 
 app.use(express.json())
 
@@ -15,6 +15,8 @@ app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id/comments', getComments)
 
 app.post('/api/articles/:article_id/comments', postComments)
+
+app.patch('/api/articles/:article_id', updateComments)
 
 app.all('*', (req, res)=>{
     res.status(404).send({msg: '404 Not Found'})

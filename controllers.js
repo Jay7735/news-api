@@ -4,7 +4,8 @@ const {
   selectArticleById,
   selectArticles,
   selectComments,
-  addComments
+  addComments,
+  updateCommentVotes
 } = require("./models");
 
 exports.getTopics = (req, res, next) => {
@@ -57,4 +58,13 @@ exports.postComments = (req, res, next) => {
         res.status(201).send({comments: result})
         //console.log({comments: result}, 'return of the controller')
     }).catch(next)
+}
+
+exports.updateComments = (req, res, next) => {
+  const id = req.params.article_id
+  const update = req.body.inc_votes
+  updateCommentVotes(update, id).then((result)=>{
+    res.status(200).send({updated: result})
+    
+  }).catch(next)
 }
