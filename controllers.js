@@ -3,7 +3,9 @@ const {
   selectEndpoints,
   selectArticleById,
   selectArticles,
-  selectComments
+  selectComments,
+  addComments,
+  updateCommentVotes
 } = require("./models");
 
 exports.getTopics = (req, res, next) => {
@@ -45,3 +47,24 @@ exports.getComments = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.postComments = (req, res, next) => {
+    const id = req.params.article_id;
+    //console.log(id, 'from controler')
+    //console.log(req.body, 'from controller also')
+    const {author, body} = req.body
+    
+    addComments(author, body, id).then((result)=>{
+        res.status(201).send({comments: result})
+        //console.log({comments: result}, 'return of the controller')
+    }).catch(next)
+}
+
+exports.updateComments = (req, res, next) => {
+  const id = req.params.article_id
+  const update = req.body.inc_votes
+  updateCommentVotes(update, id).then((result)=>{
+    res.status(200).send({updated: result})
+    
+  }).catch(next)
+}

@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
-const { getTopics, getEndpoints, getArticleById, getArticles, getComments } = require("./controllers");
+const { getTopics, getEndpoints, getArticleById, getArticles, getComments, postComments, updateComments } = require("./controllers");
 
+app.use(express.json())
 
 app.get("/api/topics", getTopics);
 
@@ -13,6 +14,10 @@ app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id/comments', getComments)
 
+app.post('/api/articles/:article_id/comments', postComments)
+
+app.patch('/api/articles/:article_id', updateComments)
+
 app.all('*', (req, res)=>{
     res.status(404).send({msg: '404 Not Found'})
 })
@@ -23,7 +28,7 @@ app.use((err, req, res, next) => {
   }
   else if(err.code === '22P02') {
     res.status(400).send({ msg: 'Invalid input' });
-  } else res.status(500).send({msg: 'Internal Server Error' });
+  } else res.status(500).send({msg: 'Internall Server Error' });
 });
 
 module.exports = app;

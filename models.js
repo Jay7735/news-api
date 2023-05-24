@@ -1,6 +1,6 @@
 const connection = require("./db/connection");
 const fs = require("fs/promises");
-const format = require('pg-format');
+const format = require("pg-format");
 
 const selectTopics = () => {
   return connection
@@ -45,15 +45,48 @@ const selectArticles = () => {
 };
 
 const selectComments = (id) => {
-    return selectArticleById(id).then((result)=>{
-        return connection.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`, [id])
+  return selectArticleById(id)
+    .then((result) => {
+      return connection.query(
+        `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`,
+        [id]
+      );
     })
-    .then((result)=>{
-            return result.rows})
-}
-            
-            
-          
+    .then((result) => {
+      return result.rows;
+    });
+};
 
-module.exports = {selectArticleById, selectTopics, selectEndpoints, selectArticles, selectComments }
+const addComments = (author, body, id) => {
+  return selectArticleById(id).then((result) => {
+    return connection
+      .query(
+        `INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;`,
+        [author, body, id]
+      )
+      .then((result) => {
+        return result.rows;
+      });
+  });
+};
 
+const updateCommentVotes = (update, id) => {
+  return connection
+    .query(
+      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
+      [update, id]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+module.exports = {
+  selectArticleById,
+  selectTopics,
+  selectEndpoints,
+  selectArticles,
+  selectComments,
+  addComments,
+  updateCommentVotes,
+};

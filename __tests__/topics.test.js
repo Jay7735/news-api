@@ -176,13 +176,14 @@ describe("6 GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  it('should return an array of appropriate length', () => {
+  it("should return an array of appropriate length", () => {
     return request(app)
-    .get("/api/articles/1/comments")
-    .expect(200)
-    .then((response) => {
-      expect(response.body.comments.length).toBe(11);
-  })})
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(11);
+      });
+  });
   it("should return the comments with most recent first (ie DESC by date)", () => {
     return request(app)
       .get("/api/articles/1/comments")
@@ -193,30 +194,114 @@ describe("6 GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  it('should return 400 error when passed an incorrect ID type', () => {
+  it("should return 400 error when passed an incorrect ID type", () => {
     return request(app)
-    .get("/api/articles/blahblah/comments")
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe("Invalid input");
-    });
+      .get("/api/articles/blahblah/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid input");
+      });
   });
-  it('should return 404 when passed a non-existent ID', () => {
+  it("should return 404 when passed a non-existent ID", () => {
     return request(app)
-    .get('/api/articles/777/comments')
-    .expect(404)
-    .then((response)=>{
-      expect(response.body.msg).toBe('Non-existent ID: 777')
-    })
+      .get("/api/articles/777/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Non-existent ID: 777");
+      });
   });
-  it('should return 200 and an empty array when passed a valid ID which has no comments', () => {
+  it("should return 200 and an empty array when passed a valid ID which has no comments", () => {
     return request(app)
-    .get('/api/articles/4/comments')
-    .expect(200)
-    .then((response)=>{
-      expect(response.body.comments.length).toBe(0)
-      expect(response.body.comments).toEqual([])
-    })
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(0);
+        expect(response.body.comments).toEqual([]);
+      });
   });
-  
+});
+
+describe("7 POST /api/articles/:article_id/comments", () => {
+  it("should add comments and respond with the posted comment ", () => {
+    const comment = {
+      author: "butter_bridge",
+      body: "I am making a comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .expect(201)
+      .then((response) => {
+        console.log(response.body.comments, "body from test");
+        const returnedObj = response.body.comments[0];
+        expect(returnedObj.body).toBe("I am making a comment");
+        expect(returnedObj.article_id).toBe(1);
+        expect(returnedObj.author).toBe("butter_bridge");
+        expect(returnedObj).toHaveProperty("comment_id");
+        expect(returnedObj).toHaveProperty("votes");
+        expect(returnedObj).toHaveProperty("created_at");
+      });
+  });
+  it("should return 400 error when passed an incorrect ID type", () => {
+    const comment = {
+      author: "butter_bridge",
+      body: "I am making a comment",
+    };
+    return request(app)
+      .post("/api/articles/blahblah/comments")
+      .send(comment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid input");
+      });
+  });
+  it("should return 404 when passed a non existent ID", () => {
+    const comment = {
+      author: "butter_bridge",
+      body: "I am making a comment",
+    };
+    return request(app)
+      .post("/api/articles/777/comments")
+      .send(comment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Non-existent ID: 777");
+      });
+  });
+  it("should add comment and respond with posted comment even when given more than author and body", () => {
+    const comment = {
+      author: "butter_bridge",
+      body: "I am making a comment",
+      blah: "blah blah comment",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(comment)
+      .expect(201)
+      .then((response) => {
+        console.log(response.body.comments, "body from test");
+        const returnedObj = response.body.comments[0];
+        expect(returnedObj.body).toBe("I am making a comment");
+        expect(returnedObj.article_id).toBe(1);
+        expect(returnedObj.author).toBe("butter_bridge");
+        expect(returnedObj).toHaveProperty("comment_id");
+        expect(returnedObj).toHaveProperty("votes");
+        expect(returnedObj).toHaveProperty("created_at");
+        expect(returnedObj).not.toHaveProperty("blah");
+      });
+  });
+});
+
+describe.only("8 PATCH /api/articles/:article_id", () => {
+  it("should take an update and update the votes by the given amount", () => {
+    const updateVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((response) => {
+        const returnedObj = response.body.updated;
+        expect(returnedObj.article_id).toBe(1)
+      });
+  });
 });
