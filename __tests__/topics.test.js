@@ -294,7 +294,7 @@ describe("7 POST /api/articles/:article_id/comments", () => {
 
 describe.only("8 PATCH /api/articles/:article_id", () => {
   it("should take an update and update the votes by the given amount", () => {
-    const updateVotes = { inc_votes: 1 };
+    const updateVotes = { inc_votes: 19 };
     return request(app)
       .patch("/api/articles/1")
       .send(updateVotes)
@@ -302,6 +302,22 @@ describe.only("8 PATCH /api/articles/:article_id", () => {
       .then((response) => {
         const returnedObj = response.body.updated;
         expect(returnedObj.article_id).toBe(1)
+        expect(returnedObj.votes).toBe(119)
       });
   });
-});
+  it('should have the same functionality but to decrease votes', () => {
+    const updateVotes = { inc_votes: -19 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(200)
+      .then((response) => {
+        const returnedObj = response.body.updated;
+        expect(returnedObj.article_id).toBe(1)
+        expect(returnedObj.votes).toBe(81)
+  });
+})})
+
+
+//it should return error if passed wrong data type
+//it should return error if passed incorrect id 

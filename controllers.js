@@ -5,7 +5,7 @@ const {
   selectArticles,
   selectComments,
   addComments,
-  updateCommentVotes
+  updateArticleVotes
 } = require("./models");
 
 exports.getTopics = (req, res, next) => {
@@ -60,10 +60,10 @@ exports.postComments = (req, res, next) => {
     }).catch(next)
 }
 
-exports.updateComments = (req, res, next) => {
+exports.updateVotes = (req, res, next) => {
   const id = req.params.article_id
   const update = req.body.inc_votes
-  updateCommentVotes(update, id).then((result)=>{
+  updateArticleVotes(update, id).then((result)=>{
     res.status(200).send({updated: result})
     
   }).catch(next)

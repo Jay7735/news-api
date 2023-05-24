@@ -70,7 +70,7 @@ const addComments = (author, body, id) => {
   });
 };
 
-const updateCommentVotes = (update, id) => {
+const updateArticleVotes = (update, id) => {
   return connection
     .query(
       `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
@@ -88,5 +88,5 @@ module.exports = {
   selectArticles,
   selectComments,
   addComments,
-  updateCommentVotes,
+  updateArticleVotes,
 };
