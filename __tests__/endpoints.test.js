@@ -14,10 +14,12 @@ afterAll(() => {
 
 describe("3. GET /api/topics", () => {
   it("should return all the required keys ", () => {
+    
     return request(app)
       .get("/api/topics")
       .expect(200)
       .then((response) => {
+        console.log(response.body.topics, 'from topics')
         expect(response.body.topics.length).toBe(3);
         response.body.topics.forEach((topic) => {
           expect(topic).toHaveProperty("slug");
@@ -221,7 +223,7 @@ describe("6 GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("7 POST /api/articles/:article_id/comments", () => {
+describe.only("7 POST /api/articles/:article_id/comments", () => {
   it("should add comments and respond with the posted comment ", () => {
     const comment = {
       author: "butter_bridge",
