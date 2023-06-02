@@ -50,7 +50,8 @@ const selectArticlesByTopic = (topic) => {
   FROM articles
   LEFT JOIN comments ON comments.article_id = articles.article_id
   GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC WHERE articles.topic = $1;`,
+  WHERE articles.topic = $1
+  ORDER BY articles.created_at DESC;`,
     [topic]
   ).then((result)=>{
     return result.rows
