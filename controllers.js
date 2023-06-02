@@ -41,6 +41,7 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getArticlesByTopic = (req, res, next) => {
+  const topic = req.params.topic;
   selectArticlesByTopic(topic).then((articles)=>{
     res.status(200).send({articles})
   })
