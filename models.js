@@ -45,17 +45,19 @@ const selectArticles = () => {
 };
 
 const selectArticlesByTopic = (topic) => {
-  return connection.query(
-    `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
-  FROM articles
-  LEFT JOIN comments ON comments.article_id = articles.article_id
-  GROUP BY articles.article_id
-  WHERE articles.topic = $1
-  ORDER BY articles.created_at DESC;`,
-    [topic]
-  ).then((result)=>{
-    return result.rows
-  });
+  return connection
+    .query(
+      `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id
+    WHERE articles.topic = $1
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC;`,
+      [topic]
+    )
+    .then((result) => {
+      return result.rows;
+    });
 };
 
 const selectComments = (id) => {
@@ -105,5 +107,5 @@ module.exports = {
   selectComments,
   addComments,
   updateArticleVotes,
-  selectArticlesByTopic
+  selectArticlesByTopic,
 };
