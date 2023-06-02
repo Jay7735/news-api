@@ -45,20 +45,13 @@ const selectArticles = () => {
 };
 
 const selectArticlesByTopic = (topic) => {
-  return connection
-    .query(
-      `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
-    FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id
-    WHERE articles.topic = $1
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;`,
-      [topic]
-    )
-    .then((result) => {
-      return result.rows;
-    });
+  return selectArticles()
+  .then((articles) => {
+    const filteredArticles = articles.filter((article) => article.topic === topic);
+    return filteredArticles;
+  });
 };
+
 
 const selectComments = (id) => {
   return selectArticleById(id)

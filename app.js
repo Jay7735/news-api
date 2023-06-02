@@ -15,7 +15,7 @@ app.get('/api/articles/:article_id', getArticleById)
 
 app.get('/api/articles', getArticles)
 
-app.get('/api/articles/:topic', getArticlesByTopic)
+app.get('/api/:topic/articles', getArticlesByTopic)
 
 app.get('/api/articles/:article_id/comments', getComments)
 
